@@ -11,24 +11,56 @@
         layer-type="base"
         name="OpenStreetMap"
       />
+
+      <l-marker
+        :lat-lng="center"
+        draggable
+        @dragend="drag"
+      >
+        <l-popup>
+          {{ center }}
+        </l-popup>
+      </l-marker>
     </l-map>
   </q-page>
 </template>
 
 <script>
 import { defineComponent } from 'vue';
-import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
+import {
+  LMap,
+  LPopup,
+  LMarker,
+  LTileLayer
+} from '@vue-leaflet/vue-leaflet';
 
 export default defineComponent({
   components: {
-    LMap, LTileLayer
+    LMap,
+    LPopup,
+    LMarker,
+    LTileLayer
   },
   name: 'PageIndex',
   data() {
     return {
-      zoom: 10,
-      center: [47.41322, 10.219482]
+      zoom: 15,
+      center: [45.69173591, 9.23902452]
     };
+  },
+  methods: {
+    drag(event) {
+      const marker = event.target;
+      let position = marker.getLatLng();
+      position = {
+        ...position,
+        lat: position.lat.toFixed(8),
+        lng: position.lng.toFixed(8)
+      };
+
+      const popup = marker.getPopup();
+      popup.setContent(`[ ${position.lat}, ${position.lng} ]`);
+    },
   },
 });
 </script>
