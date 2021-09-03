@@ -7,10 +7,10 @@
 // https://v2.quasar.dev/quasar-cli/quasar-conf-js
 
 /* eslint-env node */
-const ESLintPlugin = require('eslint-webpack-plugin')
+const ESLintPlugin = require('eslint-webpack-plugin');
 const { configure } = require('quasar/wrappers');
 
-module.exports = configure(function (ctx) {
+module.exports = configure((ctx) => {
   return {
     // https://v2.quasar.dev/quasar-cli/supporting-ts
     supportTS: false,
@@ -62,14 +62,15 @@ module.exports = configure(function (ctx) {
       // gzip: true,
       // analyze: true,
 
-      // Options below are automatically set depending on the env, set them if you want to override
+      // Options below are automatically set depending on the env,
+      // set them if you want to override
       // extractCSS: false,
 
       // https://v2.quasar.dev/quasar-cli/handling-webpack
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
-      chainWebpack (chain) {
+      chainWebpack: (chain) => {
         chain.plugin('eslint-webpack-plugin')
-          .use(ESLintPlugin, [{ extensions: [ 'js', 'vue' ] }])
+          .use(ESLintPlugin, [{ extensions: [ 'js', 'vue' ] }]);
       },
     },
 
@@ -87,9 +88,11 @@ module.exports = configure(function (ctx) {
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
 
-      // For special cases outside of where the auto-import strategy can have an impact
+      // For special cases outside of where
+      // the auto-import strategy can have an impact
       // (like functional components as one of the examples),
-      // you can manually specify Quasar components/directives to be available everywhere:
+      // you can manually specify Quasar components/directives
+      // to be available everywhere:
       //
       // components: [],
       // directives: [],
@@ -109,15 +112,17 @@ module.exports = configure(function (ctx) {
       // manualStoreHydration: true,
       // manualPostHydrationTrigger: true,
 
-      prodPort: 3000, // The default port that the production server should use
-                      // (gets superseded if process.env.PORT is specified at runtime)
+      prodPort: 3000,
+      // The default port that the production server should use
+      // (gets superseded if process.env.PORT is specified at runtime)
 
       maxAge: 1000 * 60 * 60 * 24 * 30,
-        // Tell browser when a file from the server should expire from cache (in ms)
+      // Tell browser when a file from the server
+      // should expire from cache (in ms)
 
-      chainWebpackWebserver (chain) {
+      chainWebpackWebserver: (chain) => {
         chain.plugin('eslint-webpack-plugin')
-          .use(ESLintPlugin, [{ extensions: [ 'js' ] }])
+          .use(ESLintPlugin, [{ extensions: [ 'js' ] }]);
       },
 
       middlewares: [
@@ -131,17 +136,18 @@ module.exports = configure(function (ctx) {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
 
-      // for the custom service worker ONLY (/src-pwa/custom-service-worker.[js|ts])
+      // for the custom service worker ONLY
+      // (/src-pwa/custom-service-worker.[js|ts])
       // if using workbox in InjectManifest mode
-      chainWebpackCustomSW (chain) {
+      chainWebpackCustomSW: (chain) => {
         chain.plugin('eslint-webpack-plugin')
-          .use(ESLintPlugin, [{ extensions: [ 'js' ] }])
+          .use(ESLintPlugin, [{ extensions: [ 'js' ] }]);
       },
 
       manifest: {
-        name: `POI Editor`,
-        short_name: `POI Editor`,
-        description: `A POI Editor with map`,
+        name: 'POI Editor',
+        short_name: 'POI Editor',
+        description: 'A POI Editor with map',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
@@ -178,7 +184,8 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli/developing-cordova-apps/configuring-cordova
     cordova: {
-      // noIosLegacyBuildFlag: true, // uncomment only if you know what you are doing
+      // uncomment only if you know what you are doing
+      // noIosLegacyBuildFlag: true,
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli/developing-capacitor-apps/configuring-capacitor
@@ -209,17 +216,19 @@ module.exports = configure(function (ctx) {
         appId: 'poi'
       },
 
-      // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
-      chainWebpackMain (chain) {
+      // "chain" is a webpack-chain object
+      // https://github.com/neutrinojs/webpack-chain
+      chainWebpackMain: (chain) => {
         chain.plugin('eslint-webpack-plugin')
-          .use(ESLintPlugin, [{ extensions: [ 'js' ] }])
+          .use(ESLintPlugin, [{ extensions: [ 'js' ] }]);
       },
 
-      // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
-      chainWebpackPreload (chain) {
+      // "chain" is a webpack-chain object
+      // https://github.com/neutrinojs/webpack-chain
+      chainWebpackPreload: (chain) => {
         chain.plugin('eslint-webpack-plugin')
-          .use(ESLintPlugin, [{ extensions: [ 'js' ] }])
+          .use(ESLintPlugin, [{ extensions: [ 'js' ] }]);
       },
     }
-  }
+  };
 });
