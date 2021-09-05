@@ -13,12 +13,15 @@
       />
 
       <l-marker
-        :lat-lng="center"
+        v-for="(item, index) in $store.state.map.points"
+        :key="`marker-${index}`"
+        :lat-lng="item.center"
         draggable
+        @add="add($event, item)"
         @dragend="drag"
       >
         <l-popup>
-          {{ center }}
+          {{ item.center }}
         </l-popup>
       </l-marker>
     </l-map>
@@ -49,17 +52,21 @@ export default defineComponent({
     };
   },
   methods: {
+    add(event, item) {
+      event.target.id = item.id;
+    },
     drag(event) {
       const marker = event.target;
-      let position = marker.getLatLng();
-      position = {
-        ...position,
-        lat: position.lat.toFixed(8),
-        lng: position.lng.toFixed(8)
-      };
+      const position = Object.values(marker.getLatLng()).map((coordinate) => {
+        return parseFloat(coordinate.toFixed(8));
+      });
 
-      const popup = marker.getPopup();
-      popup.setContent(`[ ${position.lat}, ${position.lng} ]`);
+      this.$store.dispatch('map/update', {
+        id: marker.id,
+        data: {
+          center: position
+        }
+      });
     },
   },
 });

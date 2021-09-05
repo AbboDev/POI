@@ -28,14 +28,29 @@
         <q-item-label
           header
         >
-          Essential Links
+          Points
         </q-item-label>
 
         <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
+          v-for="(item, index) in $store.state.map.points"
+          :key="`marker-${index}`"
+          v-bind="item"
+          :caption="item.center"
         />
+
+        <q-item
+          clickable
+          v-ripple
+          @click="addPoint"
+        >
+          <q-item-section avatar>
+            <q-icon name="add_location_alt" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Add point</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -46,6 +61,7 @@
 </template>
 
 <script>
+import { uid } from 'quasar';
 import EssentialLink from 'components/EssentialLink.vue';
 import { defineComponent, ref } from 'vue';
 
@@ -68,6 +84,16 @@ export default defineComponent({
         leftDrawerOpen.value = !leftDrawerOpen.value;
       }
     };
+  },
+  methods: {
+    addPoint() {
+      const id = uid();
+      this.$store.dispatch('map/push', {
+        id,
+        title: id,
+        center: [45.69173591, 9.23902452],
+      });
+    }
   }
 });
 </script>
