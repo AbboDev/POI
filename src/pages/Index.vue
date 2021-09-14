@@ -1,10 +1,12 @@
 <template>
   <q-page class="flex items-stretch">
     <l-map
+      :tap="false"
       ref="map"
       :zoom="zoom"
       :center="center"
       style="height: auto;"
+      @click="addMarker"
     >
       <l-tile-layer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -29,6 +31,7 @@
 </template>
 
 <script>
+import { uid } from 'quasar';
 import { defineComponent } from 'vue';
 import {
   LMap,
@@ -52,6 +55,20 @@ export default defineComponent({
     };
   },
   methods: {
+    addMarker(event) {
+      if (event.latlng) {
+        const id = uid();
+        const position = Object.values(event.latlng).map((coordinate) => {
+          return parseFloat(coordinate.toFixed(8));
+        });
+
+        this.$store.dispatch('map/push', {
+          id,
+          title: id,
+          center: position,
+        });
+      }
+    },
     add(event, item) {
       event.target.id = item.id;
     },
