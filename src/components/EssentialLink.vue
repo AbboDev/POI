@@ -1,24 +1,29 @@
 <template>
-  <q-item clickable>
+  <q-item
+    clickable
+    @click="setCenter"
+  >
     <q-item-section>
-      {{ titleLocal }}
-      <q-popup-edit
-        v-model="titleLocal"
-        auto-save
-        v-slot="scope"
-        @save="update"
-      >
-        <q-input
-          v-model="scope.value"
-          dense
-          autofocus
-          @keyup.enter="scope.set"
+      <q-item-label>
+        {{ titleLocal }}
+        <q-popup-edit
+          v-model="titleLocal"
+          auto-save
+          v-slot="scope"
+          @save="update"
         >
-          <template #append>
-            <q-icon name="edit" />
-          </template>
-        </q-input>
-      </q-popup-edit>
+          <q-input
+            v-model="scope.value"
+            dense
+            autofocus
+            @keyup.enter="scope.set"
+          >
+            <template #append>
+              <q-icon name="edit" />
+            </template>
+          </q-input>
+        </q-popup-edit>
+      </q-item-label>
 
       <q-item-label caption>
         {{ coordinates }}
@@ -73,6 +78,9 @@ export default defineComponent({
     },
     remove() {
       this.$store.dispatch('map/remove', this.id);
+    },
+    setCenter() {
+      this.$store.dispatch('map/updateCenterById', this.id);
     }
   }
 });

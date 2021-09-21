@@ -8,6 +8,14 @@ export function updateCenter({ commit }, center) {
   }
 }
 
+export function updateCenterById({ commit, getters }, id) {
+  const point = getters.getPoint(id);
+
+  if (point) {
+    commit('updateCenter', point.center);
+  }
+}
+
 export function push({ commit, state }, point) {
   if (typeof point.center === 'undefined') {
     point.center = state.center;
