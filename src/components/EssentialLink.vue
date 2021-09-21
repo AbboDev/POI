@@ -24,6 +24,15 @@
         {{ coordinates }}
       </q-item-label>
     </q-item-section>
+
+    <q-item-section side>
+      <q-btn
+        round
+        color="primary"
+        icon="delete"
+        @click="remove"
+      />
+    </q-item-section>
   </q-item>
 </template>
 
@@ -61,6 +70,9 @@ export default defineComponent({
           title: value
         }
       });
+    },
+    remove() {
+      this.$store.dispatch('map/remove', this.id);
     }
   }
 });

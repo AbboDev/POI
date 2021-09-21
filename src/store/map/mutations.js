@@ -10,3 +10,9 @@ export function update(state, { point, data }) {
     ...data
   };
 }
+
+export function remove(state, point) {
+  const index = state.points.indexOf(point);
+
+  state.points.splice(index, 1);
+}
