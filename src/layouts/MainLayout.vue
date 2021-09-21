@@ -24,10 +24,8 @@
       show-if-above
       bordered
     >
-      <q-list>
-        <q-item-label
-          header
-        >
+      <q-list separator>
+        <q-item-label header>
           Points
         </q-item-label>
 
@@ -35,7 +33,7 @@
           v-for="(item, index) in $store.state.map.points"
           :key="`marker-${index}`"
           v-bind="item"
-          :caption="item.center"
+          :coordinates="item.center"
         />
 
         <q-item
@@ -90,7 +88,7 @@ export default defineComponent({
       const id = uid();
       this.$store.dispatch('map/push', {
         id,
-        title: id,
+        title: 'Nuovo punto',
         center: [45.69173591, 9.23902452],
       });
     }

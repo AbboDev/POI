@@ -1,21 +1,27 @@
 <template>
-  <q-item
-    clickable
-    tag="a"
-    target="_blank"
-    :href="link"
-  >
-    <q-item-section
-      v-if="icon"
-      avatar
-    >
-      <q-icon :name="icon" />
-    </q-item-section>
-
+  <q-item clickable>
     <q-item-section>
-      <q-item-label>{{ title }}</q-item-label>
+      {{ titleLocal }}
+      <q-popup-edit
+        v-model="titleLocal"
+        auto-save
+        v-slot="scope"
+        @save="update"
+      >
+        <q-input
+          v-model="scope.value"
+          dense
+          autofocus
+          @keyup.enter="scope.set"
+        >
+          <template #append>
+            <q-icon name="edit" />
+          </template>
+        </q-input>
+      </q-popup-edit>
+
       <q-item-label caption>
-        {{ caption }}
+        {{ coordinates }}
       </q-item-label>
     </q-item-section>
   </q-item>
@@ -31,20 +37,30 @@ export default defineComponent({
       type: String,
       required: true
     },
-
-    caption: {
-      type: String,
-      default: ''
+    coordinates: {
+      type: Array,
+      default() {
+        return [];
+      }
     },
-
-    link: {
+    id: {
       type: String,
-      default: '#'
-    },
-
-    icon: {
-      type: String,
-      default: ''
+      required: true
+    }
+  },
+  data() {
+    return {
+      titleLocal: this.title,
+    };
+  },
+  methods: {
+    update(value) {
+      this.$store.dispatch('map/update', {
+        id: this.id,
+        data: {
+          title: value
+        }
+      });
     }
   }
 });

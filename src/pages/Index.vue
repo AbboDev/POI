@@ -23,7 +23,7 @@
         @dragend="drag"
       >
         <l-popup>
-          {{ item.center }}
+          {{ item.title }}
         </l-popup>
       </l-marker>
     </l-map>
@@ -64,7 +64,7 @@ export default defineComponent({
 
         this.$store.dispatch('map/push', {
           id,
-          title: id,
+          title: 'Nuovo punto',
           center: position,
         });
       }
