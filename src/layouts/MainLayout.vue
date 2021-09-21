@@ -89,7 +89,6 @@ export default defineComponent({
       this.$store.dispatch('map/push', {
         id,
         title: 'Nuovo punto',
-        center: [45.69173591, 9.23902452],
       });
     }
   }

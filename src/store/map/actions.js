@@ -1,4 +1,18 @@
-export function push({ commit }, point) {
+export function updateCenter({ commit }, center) {
+  if (Array.isArray(center)
+    && center.length === 2
+    && !isNaN(center[0])
+    && !isNaN(center[1])
+  ) {
+    commit('updateCenter', center);
+  }
+}
+
+export function push({ commit, state }, point) {
+  if (typeof point.center === 'undefined') {
+    point.center = state.center;
+  }
+
   commit('push', point);
 }
 

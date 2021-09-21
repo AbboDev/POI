@@ -1,5 +1,6 @@
 export default function () {
   return {
-    points: []
+    points: [],
+    center: [0, 0]
   };
 }

@@ -1,3 +1,7 @@
+export function updateCenter(state, center) {
+  state.center = center;
+}
+
 export function push(state, point) {
   state.points.push(point);
 }

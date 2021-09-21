@@ -1,12 +1,13 @@
 <template>
   <q-page class="flex items-stretch">
     <l-map
-      :tap="false"
       ref="map"
+      :tap="false"
       :zoom="zoom"
       :center="center"
       style="height: auto;"
       @click="addMarker"
+      @move="changeCenter"
     >
       <l-tile-layer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -85,6 +86,13 @@ export default defineComponent({
         }
       });
     },
+    changeCenter(event) {
+      const center = Object.values(event.target.getCenter()).map((coordinate) => {
+        return parseFloat(coordinate.toFixed(8));
+      });
+
+      this.$store.dispatch('map/updateCenter', center);
+    }
   },
 });
 </script>
