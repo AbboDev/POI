@@ -1,2 +1,19 @@
 // app global css in SCSS form
 @import "leaflet/dist/leaflet.css";
+
+._sidebar-input-file {
+  width: 100%;
+
+  .q-field__marginal {
+    color: #000;
+  }
+
+  .q-field__inner {
+    padding: 0 0 0 20px;
+    cursor: pointer;
+
+    .q-field__label {
+      font-size: 1em;
+    }
+  }
+}

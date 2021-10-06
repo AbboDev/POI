@@ -12,10 +12,16 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          POI Editor
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn
+          icon="add_location_alt"
+          @click="addPoint"
+          round
+          flat
+          color="white"
+        />
       </q-toolbar>
     </q-header>
 
@@ -24,19 +30,13 @@
       show-if-above
       bordered
     >
-      <q-list>
+      <q-list
+        class="column no-wrap"
+        style="height: 100%;"
+      >
         <q-item-label header>
           Points
         </q-item-label>
-
-        <EssentialLink
-          v-for="(item, index) in $store.state.map.points"
-          :key="`marker-${index}`"
-          v-bind="item"
-          :coordinates="item.center"
-        />
-
-        <q-separator />
 
         <q-item
           clickable
@@ -59,6 +59,7 @@
               borderless
               v-model="file"
               label="Import points"
+              class="_sidebar-input-file"
             >
               <template #before>
                 <q-icon name="share_location" />
@@ -74,6 +75,17 @@
             </q-file>
           </q-item-section>
         </q-item>
+
+        <q-separator />
+
+        <q-scroll-area style="height: 100%;">
+          <EssentialLink
+            v-for="(item, index) in $store.state.map.points"
+            :key="`marker-${index}`"
+            v-bind="item"
+            :coordinates="item.center"
+          />
+        </q-scroll-area>
       </q-list>
     </q-drawer>
 
