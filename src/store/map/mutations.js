@@ -6,6 +6,10 @@ export function push(state, point) {
   state.points.push(point);
 }
 
+export function pushMultiple(state, points) {
+  state.points = state.points.concat(points);
+}
+
 export function update(state, { point, data }) {
   const index = state.points.indexOf(point);
 

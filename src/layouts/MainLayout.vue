@@ -87,8 +87,7 @@
 import { uid } from 'quasar';
 import EssentialLink from 'components/EssentialLink.vue';
 import { defineComponent, ref } from 'vue';
-
-const Buffer = require('buffer/').Buffer;
+import { importOV2 } from '../utils/ov2';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -117,114 +116,97 @@ export default defineComponent({
     },
     importPoints() {
       const reader = new FileReader();
-
-      const ascii2utf8 = function(buffer) {
-        let c;
-        let i;
-        let j;
-
-        // New buffer with utf8 string:
-        const utf8 = Buffer.alloc(buffer.length * 2);
-
-        // Convert:
-        j = 0;
-        for (i = 0; i < buffer.length; i++) {
-          c = buffer.readUInt8(i, 1);
-
-          if (c < 0x80) {
-            utf8.writeUInt8(buffer.readUInt8(i, 1), j += 1);
-          } else if (c < 0xc0) {
-            utf8.writeUInt8(0xc2, j += 1);
-            utf8.writeUInt8(buffer.readUInt8(i, 1), j += 1);
-          } else {
-            utf8.writeUInt8(0xc3, j += 1);
-            utf8.writeUInt8(buffer.readUInt8(i, 1) - 0x40, j += 1);
-          }
-        }
-
-        return utf8.toString('utf8', 0, j);
-      };
+      const importStatus = this.$q.notify({
+        type: 'primary',
+        message: 'Importazione avviata...',
+        group: false,
+        timeout: 0,
+        spinner: true,
+      });
 
       reader.onload = (event) => {
-        const ov2 = Buffer.from(event.target.result);
-        const records = [];
+        importOV2(event.target.result)
+          .then((records) => {
+            return new Promise((resolve) => {
+              const points = [];
+              const errors = [];
 
-        let type;
-        let rlength;
+              importStatus({
+                message: 'Caricamento record...',
+                caption: '0%'
+              });
 
-        let record = 0;
-        let i = 0;
+              for (const record of records) {
+                if (record.lng && record.lat) {
+                  if (!record.info) {
+                    record.info = this.file.name.replace(/\.[^/.]+$/, '');
+                  }
 
-        record = 0;
-        i = 0;
-
-        try {
-          do {
-            type = ov2.readUInt8(i + 0);
-            rlength = ov2.readUInt32LE(i + 1);
-
-            switch (type) {
-            // Deleted record:
-            case 0:
-              throw new Error(`The type "${type}" is not yet decoded!`);
-
-            // Skipper Record:
-            case 1:
-              throw new Error(`The type "${type}" is not yet decoded!`);
-              // records[record] = {
-              //   record,
-              //   type,
-              //   bytes: rlength,
-              //   λwest: ov2.readInt32LE(i + 5) / 100000,
-              //   φsouth: ov2.readInt32LE(i + 9) / 100000,
-              //   λeast: ov2.readInt32LE(i + 13) / 100000,
-              //   φnorth: ov2.readInt32LE(i + 17) / 100000,
-              // };
-
-              // i += 21;
-              // record += 1;
-              // break;
-
-            // Simple POI Record:
-            case 2:
-              records[record] = {
-                record,
-                type,
-                length: rlength,
-                lng: ov2.readInt32LE(i + 5) / 100000,
-                lat: ov2.readInt32LE(i + 9) / 100000,
-                info: ascii2utf8(ov2.slice(i + 13, i + (rlength)))
-                  .replace(/\0/g, ''),
-              };
-
-              if (records[record].lng && records[record].lat) {
-                if (!records[record].info) {
-                  records[record].info = 'Nuovo punto';
+                  points.push({
+                    id: uid(),
+                    title: record.info,
+                    center: [record.lat, record.lng]
+                  });
+                } else {
+                  errors.push(`The record "${record}" misses properties!`);
                 }
-                this.$store.dispatch('map/push', {
-                  id: uid(),
-                  title: records[record].info,
-                  center: [records[record].lat, records[record].lng]
+
+                importStatus({
+                  caption: `${Math.floor(record * 100 / records.length)}%`
                 });
-              } else {
-                throw new Error(`The record "${record}" misses properties!`);
               }
 
-              i += ov2.readUInt32LE(i + 1);
-              record += 1;
-              break;
+              resolve(points);
+            });
+          })
+          .then((points) => {
+            return new Promise((resolve) => {
+              let i = 0;
+              const step = 100;
 
-            // Extended POI Record:
-            case 3:
-              throw new Error(`The type "${type}" is not yet decoded!`);
+              importStatus({
+                message: 'Registrazione punti...',
+                caption: '0%'
+              });
 
-            default:
-              throw new Error(`The type "${type}" is unknown!`);
-            }
-          } while (i < ov2.length);
-        } catch (error) {
-          console.error(error);
-        }
+              const interval = setInterval(() => {
+                const min = i * step;
+                const max = Math.min((i + 1) * step, points.length);
+
+                if (max >= points.length) {
+                  clearInterval(interval);
+                  resolve();
+                }
+
+                importStatus({
+                  caption: `${Math.floor(max * 100 / points.length)}%`
+                });
+
+                this.$store.dispatch(
+                  'map/pushMultiple',
+                  points.slice(min, max)
+                );
+                ++i;
+              }, 500);
+            });
+          })
+          .catch((error) => {
+            this.$q.notify({
+              type: 'negative',
+              message: error.message,
+              timeout: 2500,
+              progress: true
+            });
+          })
+          .then(() => {
+            importStatus({
+              icon: 'done',
+              spinner: false,
+              message: 'Importazione terminata!',
+              timeout: 2500,
+              progress: true
+            });
+          });
       };
 
       reader.readAsArrayBuffer(this.file);

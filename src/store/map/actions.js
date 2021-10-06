@@ -24,6 +24,18 @@ export function push({ commit, state }, point) {
   commit('push', point);
 }
 
+export function pushMultiple({ commit, state }, points) {
+  for (const point of points) {
+    if (typeof point.center === 'undefined') {
+      point.center = state.center;
+    }
+
+    // commit('push', point);
+  }
+
+  commit('pushMultiple', points);
+}
+
 export function update({ commit, getters }, { id, data }) {
   const point = getters.getPoint(id);
 
